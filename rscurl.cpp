@@ -31,9 +31,7 @@ typedef CURLUcode (*func_curl_url_set_t)(CURLU *, CURLUPart , const char *, unsi
 typedef void (*func_curl_slist_free_all_t)(struct curl_slist *);
 typedef struct curl_slist * (*func_curl_slist_append_t)(struct curl_slist *, const char *);
 
-
 // curl_easy_getinfo
-
 
 typedef struct {
     char *buf;
@@ -457,10 +455,11 @@ public:
         tmp = func_curl_slist_append(headers, vString->value.string);
         if (tmp) {
             headers = tmp;
+            ret = 1;
+            ReturnVal(V_BOOL, &ret);
         } else {
             func_curl_slist_free_all(headers);
-            ReturnVal(V_UNDEF, &ret);
-            return 0;
+            ReturnVal(V_BOOL, &ret);
         }
 
         return 0;
@@ -595,6 +594,7 @@ RSL_CLASS_END
 EXP32 void DLMAPI EXP AddModuleObjects (void) {
     RslAddUniClass (CRScUrl::TablePtr,true);
     AddStdProc(V_STRING,  "CurlVersion",            CurlVersion,            0);
+    AddStdProc(V_STRING,  "CurlEasyStrError",       CurlEasyStrError,       0);
 }
 
 
