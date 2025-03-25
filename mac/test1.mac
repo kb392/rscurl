@@ -1,0 +1,20 @@
+import rscurl;
+import curl_const;
+
+var r;
+var url = "https://data.nalog.ru/css/ul2018/img/logo.svg";
+
+PrintLn(CurlVersion());
+
+var curl = CRScUrl();
+
+curl.EasySetOptStr(CURLOPT_URL,url);
+PrintLn("EasySetOptStr: ", r);
+
+curl.EasySetWriteFile("logo.svg");
+PrintLn("CurlEasySetWrite: ", r);
+
+r = curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+
+

@@ -1,0 +1,165 @@
+import rscurl;
+import boostptree;
+
+import curl_const;
+
+var r;
+var url = "https://egrul.nalog.ru/";
+var s;
+var json;
+var t;
+var inn = "7707083893";
+var json_rows;
+
+// PrintLn(CurlVersion());
+
+// Шаг 1
+
+var curl = CRScUrl();
+
+r = Curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+r = Curl.EasySetOptStr(CURLOPT_POSTFIELDS, "query=" + inn);
+
+r = Curl.EasySetWriteString();
+PrintLn("CurlEasySetWriteString: ", r);
+
+r = Curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+
+// Парсинг результатов шага 1 
+s = Curl.GetString();
+PrintLn("CurlGetString: ", s);
+
+json = TPropTree();
+
+if (not(json.LoadJsonString(s)))
+    PrintLn("Error parsing json string: " + s);
+    exit();
+end;
+t = json.get("t");
+PrintLn(t);
+
+
+// Шаг 2
+
+r = Curl.EasySetOpt(CURLOPT_HTTPGET, 1);
+PrintLn("CurlEasySetOpt CURLOPT_HTTPGET: ", r);
+
+url = "https://egrul.nalog.ru/search-result/" + t;
+r = Curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+Curl.ClearString();
+
+r = Curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+
+// Парсинг результатов шага 2
+s = Curl.GetString();
+PrintLn("CurlGetString: ", s);
+
+if (not(json.LoadJsonStringUtf8(s)))
+    PrintLn("Error parsing json string: " + s);
+    exit();
+end;
+
+// "rows.0.t"
+t = null;
+if (json.find("rows"))
+    json_rows = json.currentNode;
+    if (json_rows.findFirst(""))
+        t = json_rows.currentNode().get("t");
+    end;
+end;
+
+if (t == null)
+    PrintLn("Error get \"rows.0.t\" from json string: " + s);
+    exit();
+end;
+
+
+// Шаг 3
+
+url = "https://egrul.nalog.ru/vyp-request/" + t;
+PrintLN(url);
+
+r = Curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+Curl.ClearString();
+
+r = Curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+
+// Парсинг результатов шага 3
+s = Curl.GetString();
+PrintLn("CurlGetString: ", s);
+
+if (not(json.LoadJsonStringUtf8(s)))
+    PrintLn("Error parsing json string: " + s);
+    exit();
+end;
+
+t = json.get("t");
+
+if (t == null)
+    PrintLn("Error get \"t\" from json string: " + s);
+    exit();
+end;
+
+// Шаг 4
+
+url = "https://egrul.nalog.ru/vyp-status/" + t;
+PrintLN(url);
+
+r = Curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+while (true)
+
+    Curl.ClearString();
+
+    r = Curl.EasyPerform();
+    PrintLn("CurlEasyPerform: ", r);
+
+    // Парсинг результатов шага 4
+    s = Curl.GetString();
+    PrintLn("CurlGetString: ", s);
+
+    if (not(json.LoadJsonStringUtf8(s)))
+        PrintLn("Error parsing json string: " + s);
+        exit();
+    end;
+
+    if (json.get("status") == "wait")
+        continue;
+    end;
+
+    if (json.get("status") == "ready")
+        break;
+    end;
+
+    PrintLN("unknown status: " + s);
+    exit();
+
+end;
+
+// Шаг 5
+
+url = "https://egrul.nalog.ru/vyp-download/" + t;
+PrintLN(url);
+
+r = Curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+r = Curl.EasySetOpt(CURLOPT_HTTPGET, 1);
+PrintLn("CurlEasySetOpt CURLOPT_HTTPGET: ", r);
+
+r = Curl.EasySetWriteFile(inn + ".pdf");
+PrintLn("CurlEasySetWrite: ", r);
+
+r = Curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+

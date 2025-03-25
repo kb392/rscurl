@@ -1,0 +1,25 @@
+import rscurl;
+import curl_const;
+
+var r;
+var url = "http://localhost:8088/save-post.php";
+
+PrintLn(CurlVersion());
+
+var curl = CRScUrl();
+
+r = curl.EasySetOptStr(CURLOPT_URL, url);
+PrintLn("EasySetOptStr: ", r);
+
+r = curl.EasySetOpt(CURLOPT_POST, 1);
+
+r = curl.EasySetReadFile("rscurl.d32");
+PrintLn("CurlEasySetRead: ", r);
+
+curl.AddHeader("X-Header1: value1 value2");
+curl.AddHeader("X-Header2: value3");
+
+r = curl.EasyPerform();
+PrintLn("CurlEasyPerform: ", r);
+
+

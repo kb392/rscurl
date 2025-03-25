@@ -1,0 +1,23 @@
+import rslcurl;
+import curl_const;
+
+var r;
+var url = "https://egrul.nalog.ru/";
+
+// PrintLn(CurlVersion());
+
+var h = CurlEasyInit();
+PrintLn(h);
+r = CurlEasySetOptStr(h,CURLOPT_URL,url);
+PrintLn("CurlEasySetOptStr: ", r);
+
+r = CurlEasySetOptStr(h,CURLOPT_POSTFIELDS,"query=7707083893");
+
+r = CurlEasySetWriteFile(h, "7707083893.txt");
+PrintLn("CurlEasySetWrite: ", r);
+
+r = CurlEasyPerform(h);
+PrintLn("CurlEasyPerform: ", r);
+
+r = CurlEasyCleanup(h);
+PrintLn("CurlEasyСleanup: ", r);
