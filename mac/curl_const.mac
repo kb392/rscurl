@@ -471,3 +471,14 @@ const CURLINFO_CAINFO                    = CURLINFO_STRING + 61;
 const CURLINFO_CAPATH                    = CURLINFO_STRING + 62;
 const CURLINFO_XFER_ID                   = CURLINFO_OFF_T  + 63;
 const CURLINFO_CONN_ID                   = CURLINFO_OFF_T  + 64;
+
+const CURLAUTH_NONE      =   0; //   ((unsigned long)0)
+const CURLAUTH_BASIC     =   1; //   (((unsigned long)1)<<0)
+const CURLAUTH_DIGEST    =   2; //   (((unsigned long)1)<<1)
+const CURLAUTH_NEGOTIATE =   4; //   (((unsigned long)1)<<2)
+const CURLAUTH_NTLM      =   8; //   (((unsigned long)1)<<3)
+const CURLAUTH_DIGEST_IE =  16; //   (((unsigned long)1)<<4)
+const CURLAUTH_NTLM_WB   =  32; //   (((unsigned long)1)<<5)
+const CURLAUTH_BEARER    =  64; //   (((unsigned long)1)<<6)
+const CURLAUTH_AWS_SIGV4 = 128; //   (((unsigned long)1)<<7)
+const CURLAUTH_ONLY      =  -1; //   (((unsigned long)1)<<31) 2а147а483а648
