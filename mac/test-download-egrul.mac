@@ -8,23 +8,32 @@ var url = "https://egrul.nalog.ru/";
 var s;
 var json;
 var t;
-var inn = "7707083893";
+var inn = "7707049388"; // 7825706086 Агроторг // 2309085638 Магнит
 var json_rows;
 
 // PrintLn(CurlVersion());
 
-// Шаг 1
+// Шаг 0
 
 var curl = CRScUrl();
+
+// включаем вывод отладочного отчёта
+r = Curl.SetDebugLog("rscurl.log");
+PrintLn("CurlSetDebugLog: ", r);
+
+// Шаг 1
 
 r = Curl.EasySetOptStr(CURLOPT_URL, url);
 PrintLn("CurlEasySetOptStr: ", r);
 
+// включаем метод POST и задаём тело запроса
 r = Curl.EasySetOptStr(CURLOPT_POSTFIELDS, "query=" + inn);
 
+// то что получим от сервера будем складывать в строку
 r = Curl.EasySetWriteString();
 PrintLn("CurlEasySetWriteString: ", r);
 
+// выполняем запрос
 r = Curl.EasyPerform();
 PrintLn("CurlEasyPerform: ", r);
 
@@ -44,6 +53,7 @@ PrintLn(t);
 
 // Шаг 2
 
+// включаем метод GET, от шага 1 остался POST
 r = Curl.EasySetOpt(CURLOPT_HTTPGET, 1);
 PrintLn("CurlEasySetOpt CURLOPT_HTTPGET: ", r);
 
@@ -51,8 +61,11 @@ url = "https://egrul.nalog.ru/search-result/" + t;
 r = Curl.EasySetOptStr(CURLOPT_URL, url);
 PrintLn("CurlEasySetOptStr: ", r);
 
+// очищем строку от резкдьтатов шага 1
+// запись ответа в сервера в строку осталась установленной на шаге 1
 Curl.ClearString();
 
+// выполняем запрос
 r = Curl.EasyPerform();
 PrintLn("CurlEasyPerform: ", r);
 
